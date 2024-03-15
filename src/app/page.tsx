@@ -1,6 +1,6 @@
 
 import { NextPage } from "next"
-import { useEffect, useState } from "react"
+
 
 const IndexPage:NextPage = () => {
 
