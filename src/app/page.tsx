@@ -1,44 +1,53 @@
+"use client"
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 
-import { NextPage } from "next"
+const HomePage = () => {
+  const [inputValue, setInputValue] = useState('');
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch(`https://gameinfo-sgp.albiononline.com/api/gameinfo/search?q=${inputValue}`)
+      const data = await res.json()
+      setData(data);
+      console.log(`取得成功◾️${data.players}◾️`);
+    };
+    if(inputValue !== ''){
+      fetchData();
+    }
+  },[inputValue]);
+
+  //テキストボックスに入れられた値をInputValueに格納
+  const handleChange = (event:any) => {
+    setInputValue(event.target.value);
 
 
-const IndexPage:NextPage = () => {
 
-  // 下で定義されたfetchImageを実行して、statusをブラウザに表示
-  const status = fetchImage()
-  return <div><pre>{status}</pre></div>;
-}
-export default IndexPage;
+  };
 
+// https://gameinfo-sgp.albiononline.com/api/gameinfo/search?q=man		
 
-// https://gameinfo-sgp.albiononline.com/api/gameinfo/players/qJkHQXYsQI-_H71DF0Qw0Q		
-const fetchImage = async():Promise<string> => {
-  // urlから、オブジェクトとして情報（JSONデータ）を受け取る
-  const res = await fetch("https://gameinfo-sgp.albiononline.com/api/gameinfo/players/qJkHQXYsQI-_H71DF0Qw0Q");
-  console.log(`これを見てくれ${JSON.stringify(res)}`); //object
-  
-  // JSONデータを配列に変換[{ここに内容}]
-  const data = await res.json();
-  
-  console.log(`res.jsonになった時${JSON.stringify(data)}`);
-  console.log(`image[0]としたとき ${JSON.stringify(data[0])}`)
-  // 配列から0番目のオブジェクトのみにする
+  return(
+    <div>
+    <input 
+      type="text" 
+      value={inputValue} 
+      onChange={handleChange} 
+      placeholder="検索する値を入力" 
+    />
+    <p>入力されました: {inputValue}</p>
+    {/* リンク */}
+    <Link href="/my-status">
+      {/* ボタン */}
 
-  const status = `
-  名前 : ${JSON.stringify(data.Name)}
-  ID : ${JSON.stringify(data.Id)}
-  所属ギルド : ${JSON.stringify(data.GuildName)}
-  モブキル名声 : ${JSON.stringify(data.LifetimeStatistics.PvE.Total)}
-  Royal : ${JSON.stringify(data.LifetimeStatistics.PvE.Royal)}
-  採取名声 : ${JSON.stringify(data.LifetimeStatistics.PvE.Outlands)}
-  アバロンでの名声 : ${JSON.stringify(data.LifetimeStatistics.PvE.Avalon)}
-  ヘルゲートでの名声 : ${JSON.stringify(data.LifetimeStatistics.PvE.Hellgate)}
-  CorruptedDungeon : ${JSON.stringify(data.LifetimeStatistics.PvE.CorruptedDungeon)}
-  ミストでの名声 : ${JSON.stringify(data.LifetimeStatistics.PvE.Mists)}
-  製造名声 : ${JSON.stringify(data.LifetimeStatistics.Crafting.Total)}
-  このデータの更新日 : ${JSON.stringify(data.LifetimeStatistics.Timestamp)}
-  `
+        <button>検索</button>
 
-  console.log(status)
-  return status;
-}
+    </Link>
+
+    <p>{data}</p>
+  </div>
+  );
+};
+
+export default HomePage;
